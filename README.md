@@ -153,6 +153,7 @@ flowchart LR
 
 ### Tech specs
 
+- Shows on the TV as **Sith Fireplace** (app row and screensaver name)
 - Package `com.crash101g.sithfire`, minSdk 24, targetSdk 35, compileSdk 36
 - Gradle 9.8.2 + Android Gradle Plugin 9.5.0, debug-signed release build
 - `androidResources { noCompress 'mp4' }`, so the video is stored uncompressed and played straight from the APK
@@ -212,6 +213,17 @@ Steps:
 7. `when finished tell how big is the APK now?  Can anyone tell the difference in video quality?`
 8. `Do a marketing write up on this, be cautious of any potential movie copyright takedowns, refererence the youtube source, and the Claude AI prompts to make it.  Post to my github`
 9. `rename it to Sith Fireplace TV`
+10. `Can this be made into a google tv screensaver?`
+11. `how would I select this as the screensaver or go back to the previous?`
+12. `can the app have an option to set this as the screensaver or return back to the google tv default`
+    (Claude started adding an in-app switch, which needs a one-time adb permission grant. This was dropped in favour of the next prompt.)
+13. `do a write up on how to this could be set as a screensaver in github but don't do it in the app`
+14. `merge the PR`
+15. `the app on my google tv says "Sith Fireplace TV" change it to just "Sith Fireplace"`
+16. `yes commit and push it`
+17. `merge the PR`
+18. `install it on my TV` → `<TV-IP>:<PORT>`
+19. `update github`
 
 ## ⚖️ Copyright & trademarks
 
