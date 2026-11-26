@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Rebuilds Vader Fireplace end to end: download -> encode -> assets -> APK -> (optional) install.
+# Rebuilds Sith Fireplace TV end to end: download -> encode -> assets -> APK -> (optional) install.
 # Usage: ./build.sh [TV_IP[:PORT]]
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -12,7 +12,7 @@ LOOP_START=60     # seconds into the source (any point after the intro works)
 LOOP_LEN=60       # one video cycle
 XFADE=2           # audio crossfade length at the loop point
 CRF=26            # HEVC quality (lower = better/larger; 23 gave a 21.5 MB APK)
-RAW=app/src/main/res/raw/vader_fire.mp4
+RAW=app/src/main/res/raw/sith_fire.mp4
 SDK="${ANDROID_HOME:-$HOME/Android/Sdk}"
 TV_IP="${1:-}"   # IP or IP:PORT (defaults to port 5555)
 [ -n "$TV_IP" ] && [[ "$TV_IP" != *:* ]] && TV_IP="$TV_IP:5555"
@@ -62,12 +62,12 @@ ffmpeg -y -v error -i work/frame.png -vf "crop=ih:ih,scale=192:192" app/src/main
 
 # 5. Build
 ./gradlew assembleRelease --console=plain
-cp app/build/outputs/apk/release/app-release.apk VaderFireplace.apk
-echo "Built $(pwd)/VaderFireplace.apk"
+cp app/build/outputs/apk/release/app-release.apk SithFireplace.apk
+echo "Built $(pwd)/SithFireplace.apk"
 
 # 6. Optional install
 if [ -n "$TV_IP" ]; then
   adb connect "$TV_IP"
-  adb -s "$TV_IP" install -r VaderFireplace.apk
-  adb -s "$TV_IP" shell am start -n com.crash101g.vaderfire/.MainActivity
+  adb -s "$TV_IP" install -r SithFireplace.apk
+  adb -s "$TV_IP" shell am start -n com.crash101g.sithfire/.MainActivity
 fi

@@ -1,4 +1,4 @@
-package com.crash101g.vaderfire;
+package com.crash101g.sithfire;
 
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
@@ -20,7 +20,7 @@ import android.widget.FrameLayout;
 import java.io.IOException;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback {
-    private static final String TAG = "VaderFireplace";
+    private static final String TAG = "SithFireplace";
     private static final String KEY_POSITION = "position";
 
     private SurfaceView surfaceView;
@@ -118,7 +118,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         if (!resumed || !surfaceReady || player != null) return;
 
         MediaPlayer mp = new MediaPlayer();
-        try (AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.vader_fire)) {
+        try (AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.sith_fire)) {
             mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
         } catch (IOException e) {
             Log.e(TAG, "Unable to open video", e);

@@ -1,8 +1,8 @@
-# 🔥 Vader Fireplace for Google TV
+# 🔥 Sith Fireplace TV
 
 **Turn your living-room TV into a crackling Sith yule log, built by AI from a single prompt.**
 
-Vader Fireplace is a tiny, fully offline Android TV / Google TV app that plays a
+Sith Fireplace TV is a tiny, fully offline Android TV / Google TV app that plays a
 seamless, full-screen fireplace loop forever. It needs no network, no ads and no account,
 and it keeps the screen on until you press **Back** or **Home**.
 
@@ -61,9 +61,9 @@ Requirements: Linux/macOS, JDK 17+, Android SDK (`$ANDROID_HOME` or `~/Android/S
 `ffmpeg` with `libx265`, and `yt-dlp` (installed via `pipx` if missing).
 
 ```bash
-git clone https://github.com/crash101g/vader-fireplace-tv.git
-cd vader-fireplace-tv
-./build.sh                       # build only → VaderFireplace.apk
+git clone https://github.com/crash101g/sith-fireplace-tv.git
+cd sith-fireplace-tv
+./build.sh                       # build only → SithFireplace.apk
 ./build.sh 192.168.1.50          # build + install via adb (port 5555)
 ./build.sh 192.168.1.50:37123    # build + install via Wireless debugging port
 ```
@@ -76,17 +76,17 @@ On the TV, enable **Developer options → USB/Wireless debugging** and accept th
 ```mermaid
 flowchart LR
     A[YouTube source] -->|yt-dlp, first ~2 min| B[work/source.mp4]
-    B -->|ffmpeg: crop letterbox, 1 × 60 s cycle,<br/>audio crossfade, x265 CRF 26| C[res/raw/vader_fire.mp4]
+    B -->|ffmpeg: crop letterbox, 1 × 60 s cycle,<br/>audio crossfade, x265 CRF 26| C[res/raw/sith_fire.mp4]
     B -->|frame grab| D[banner 320×180 + icon]
     C --> E[Gradle 9.8.2 / AGP 9.5.0<br/>assembleRelease]
     D --> E
-    E --> F[VaderFireplace.apk]
+    E --> F[SithFireplace.apk]
     F -->|adb install -r| G[📺 Google TV]
 ```
 
 ### Tech specs
 
-- Package `com.crash101g.vaderfire`, minSdk 24, targetSdk 35, compileSdk 36
+- Package `com.crash101g.sithfire`, minSdk 24, targetSdk 35, compileSdk 36
 - Gradle 9.8.2 + Android Gradle Plugin 9.5.0, debug-signed release build
 - `androidResources { noCompress 'mp4' }`, so the video is stored uncompressed and played straight from the APK
 - `LEANBACK_LAUNCHER` + `LAUNCHER`; `leanback`, `touchscreen` and `screen.landscape` features all `required=false`
@@ -100,7 +100,7 @@ Everything else (debugging the toolchain, finding the 60-second loop, fixing an
 ffmpeg audio bug, measuring quality) was done by Claude Code.
 
 <details>
-<summary><b>Prompt 1: the spec</b></summary>
+<summary><b>Prompt 1: the spec</b> (the project was originally called "Vader Fireplace")</summary>
 
 ```text
 Build me a Google TV (Android TV) APK called "Vader Fireplace" that plays a local,
@@ -144,11 +144,12 @@ Steps:
 6. `try CRF 26 to make it smaller`
 7. `when finished tell how big is the APK now?  Can anyone tell the difference in video quality?`
 8. `Do a marketing write up on this, be cautious of any potential movie copyright takedowns, refererence the youtube source, and the Claude AI prompts to make it.  Post to my github`
+9. `rename it to Sith Fireplace TV`
 
 ## ⚖️ Copyright & trademarks
 
 - **Fan project, not affiliated with or endorsed by Lucasfilm Ltd., The Walt Disney
-  Company, Google, or the YouTube uploader.** *Star Wars* and *Darth Vader* are
+  Company, Google, or the YouTube uploader.** *Star Wars*, *Darth Vader* and *Sith* are
   trademarks of Lucasfilm Ltd. They're used here only to describe the content.
 - **No copyrighted media is in this repository.** No video, audio, frames, banner,
   icon or APK is committed or released. `.gitignore` excludes all of them.
@@ -159,7 +160,7 @@ Steps:
   Builds are for **personal, private use only**. Please don't redistribute the
   resulting APK or video.
 - Rights holders: if you have a concern, please
-  [open an issue](https://github.com/crash101g/vader-fireplace-tv/issues) and it will be
+  [open an issue](https://github.com/crash101g/sith-fireplace-tv/issues) and it will be
   addressed promptly.
 - You can swap in **any fireplace video you have rights to** by changing `URL`
   (and, if needed, `LOOP_START` / `LOOP_LEN` / `CROP`) at the top of `build.sh`.
