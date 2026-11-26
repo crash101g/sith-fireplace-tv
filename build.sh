@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Rebuilds Sith Fireplace TV end to end: download -> encode -> assets -> APK -> (optional) install.
 # Usage: ./build.sh [TV_IP[:PORT]]
+#        SCREENSAVER=1 ./build.sh TV_IP[:PORT]   # also make it the TV's screensaver
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -69,5 +70,12 @@ echo "Built $(pwd)/SithFireplace.apk"
 if [ -n "$TV_IP" ]; then
   adb connect "$TV_IP"
   adb -s "$TV_IP" install -r SithFireplace.apk
-  adb -s "$TV_IP" shell am start -n com.crash101g.sithfire/.MainActivity
+  if [ "${SCREENSAVER:-0}" = 1 ]; then
+    # Google TV's Settings only lists Google's Ambient Mode, so pick the dream via adb.
+    adb -s "$TV_IP" shell settings put secure screensaver_enabled 1
+    adb -s "$TV_IP" shell settings put secure screensaver_components com.crash101g.sithfire/.SithDreamService
+    echo "Screensaver set. Revert with: adb shell settings delete secure screensaver_components"
+  else
+    adb -s "$TV_IP" shell am start -n com.crash101g.sithfire/.MainActivity
+  fi
 fi

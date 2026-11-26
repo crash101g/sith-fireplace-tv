@@ -24,6 +24,7 @@ Gradle build, signing and installing on a real TV, was built in one conversation
 | ♾️ **Seamless loop** | One exact 60-second picture cycle with an equal-power audio crossfade, so there's no visible or audible seam |
 | 🖼️ **Edge-to-edge** | Letterbox bars are cropped out so the fire fills the whole 16:9 screen |
 | 🪶 **Tiny** | About **17 MB**, down from **191 MB** in the first build (see below) |
+| 🌙 **Screensaver too** | Optional silent screensaver (Android `DreamService`), set over adb |
 | 🔁 **Remembers its place** | Pauses in `onPause`, resumes where it left off in `onResume` |
 | 🧰 **No dependencies** | Plain Java, `MediaPlayer` + `SurfaceView`, no third-party libraries |
 | 🛠️ **One-command rebuild** | `./build.sh [TV_IP[:PORT]]` runs the whole pipeline and can install on your TV |
@@ -70,6 +71,72 @@ cd sith-fireplace-tv
 
 On the TV, enable **Developer options → USB/Wireless debugging** and accept the
 "Allow debugging" prompt the first time.
+
+### 🌙 Use it as your screensaver
+
+Besides the app, the APK includes an Android screensaver (`SithDreamService`) that plays
+the same seamless loop, **with the sound off**, whenever the TV goes idle. Press any
+button on the remote to wake the TV.
+
+Google TV's **Settings** menu only offers Google's own Ambient Mode and hides third-party
+screensavers, so you switch screensavers from a computer with `adb`. Nothing needs to be
+rooted, and the app itself never changes any settings.
+
+#### 1. Connect to the TV
+
+On the TV, turn on **Developer options → Wireless debugging** (or USB debugging), then:
+
+```bash
+adb connect <TV-IP>:<PORT>      # e.g. 192.168.1.50:5555
+adb devices                     # the TV should be listed as "device"
+```
+
+#### 2. Note your current screensaver
+
+Save this so you can return to exactly what you had before:
+
+```bash
+adb shell settings get secure screensaver_components
+```
+
+On most Google TVs this prints Google's Ambient Mode component or `null`.
+
+#### 3. Make Sith Fireplace the screensaver
+
+```bash
+adb shell settings put secure screensaver_enabled 1
+adb shell settings put secure screensaver_components com.crash101g.sithfire/.SithDreamService
+```
+
+Or let the build script install the app and select the screensaver in one step:
+
+```bash
+SCREENSAVER=1 ./build.sh <TV-IP>:<PORT>
+```
+
+It starts after the TV's usual screensaver idle time.
+
+#### 4. Go back to the Google TV default
+
+- If step 2 printed a component name, put that value back:
+  ```bash
+  adb shell settings put secure screensaver_components <value-from-step-2>
+  ```
+- If it printed `null`, delete the setting and the TV falls back to Ambient Mode:
+  ```bash
+  adb shell settings delete secure screensaver_components
+  ```
+- Uninstalling the app (`adb uninstall com.crash101g.sithfire`) also sends the TV back
+  to its default screensaver.
+
+#### Notes
+
+- A Google TV system update can reset the screensaver setting. If that happens, run
+  step 3 again.
+- The screensaver needs no permissions. The `BIND_DREAM_SERVICE` line in the manifest
+  only lets the system start it.
+- To hear the fire in the screensaver, set `PLAY_AUDIO = true` in
+  `SithDreamService.java` and rebuild.
 
 ### Pipeline
 
