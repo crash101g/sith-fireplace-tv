@@ -38,7 +38,7 @@ Gradle build, signing and installing on a real TV, was built in one conversation
 | v3: **one 60 s seamless loop**, HEVC CRF 23 | H.265 Main@4.1 | 21.5 MB |
 | v4: HEVC CRF 26 | H.265 Main@4.1 | **16.8 MB** |
 
-While analysing the source, Claude found that the 8-hour video's picture is a
+While analysing the original source (a Vader yule log), Claude found that the 8-hour video's picture is a
 **single 60-second clip repeated** (period 1,800 frames at 30 fps, after a ~24 s intro).
 Shipping one cycle looks identical to shipping eight hours. The soundtrack *doesn't*
 repeat, so the audio loop is stitched with a 2-second equal-power crossfade.
@@ -51,10 +51,15 @@ That's a 22 % smaller video with no visible difference on moving fire.
 The fireplace footage comes from this YouTube video, which `build.sh` downloads
 **on your own machine at build time**:
 
-**"Darth Vader Yule Log 8 Hours"**: <https://www.youtube.com/watch?v=CRbiqM6kif8>
+<https://www.youtube.com/watch?v=mSX3OyW9Rao>
 
-Only the first ~2 minutes are fetched (`yt-dlp --download-sections`), and only one
-60-second cycle ends up in the APK.
+Only the first ~2 minutes are fetched (`yt-dlp --download-sections`). One minute,
+starting at `LOOP_START` (default 60 s, to skip any intro), becomes the loop. The last
+2 seconds of picture **and** sound are crossfaded into the first 2, so the clip ends on
+the frame it starts with and repeats forever with no visible or audible seam. Black
+bars are found automatically (`cropdetect`) and cropped so the fire fills the screen.
+
+Don't like the minute it picked? `LOOP_START=180 ./build.sh` takes a different one.
 
 ## 🚀 Build it yourself
 
@@ -67,6 +72,18 @@ cd sith-fireplace-tv
 ./build.sh                       # build only → SithFireplace.apk
 ./build.sh 192.168.1.50          # build + install via adb (port 5555)
 ./build.sh 192.168.1.50:37123    # build + install via Wireless debugging port
+```
+
+### 🐧 Play it on Pop!_OS / Linux
+
+The same 1-minute loop is saved as `SithFireplace.mp4`, and `play-local.sh` plays it
+full screen forever (mpv, then VLC, then ffplay, whichever you have), keeping the screen awake:
+
+```bash
+NO_APK=1 ./build.sh            # just the video, no Android SDK needed
+./play-local.sh                # Esc / q to quit
+./play-local.sh --mute         # no crackle
+./play-local.sh --install      # add "Sith Fireplace" to the app launcher
 ```
 
 On the TV, enable **Developer options → USB/Wireless debugging** and accept the
