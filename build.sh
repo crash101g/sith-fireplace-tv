@@ -12,7 +12,7 @@ URL="${URL:-https://www.youtube.com/watch?v=mSX3OyW9Rao}"
 LOOP_START="${LOOP_START:-60}"   # seconds into the source where the 1-minute clip starts (skips any intro)
 LOOP_LEN="${LOOP_LEN:-60}"       # length of the loop: 1 minute
 XFADE="${XFADE:-2}"              # picture + sound crossfade at the loop point, so the repeat has no seam
-CRF="${CRF:-26}"                 # HEVC quality (lower = better/larger)
+CRF="${CRF:-30}"                 # HEVC quality (lower = better/larger)
 RAW=app/src/main/res/raw/sith_fire.mp4
 LOCAL=Fireplace.mp4          # the same loop, for playing on the PC (./play-local.sh)
 SDK="${ANDROID_HOME:-$HOME/Android/Sdk}"
@@ -65,7 +65,7 @@ FILTER="[0:v]$VPREP[vb];[1:v]$VPREP[va];[vb][va]xfade=transition=fade:duration=$
 MAPS=(-map "[v]")
 if [ "$HAS_AUDIO" = audio ]; then
   FILTER="$FILTER;[0:a]aresample=48000,asetpts=PTS-STARTPTS[a1];[1:a]aresample=48000,asetpts=PTS-STARTPTS[a2];[a1][a2]acrossfade=d=$X:c1=qsin:c2=qsin[a]"
-  MAPS+=(-map "[a]" -c:a aac -b:a 160k -ac 2)
+  MAPS+=(-map "[a]" -c:a aac -b:a 128k -ac 2)
 fi
 # (Two separately trimmed inputs: ffmpeg 6.1's acrossfade outputs nothing when both
 #  pieces are atrim'd from one input.)

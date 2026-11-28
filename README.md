@@ -23,7 +23,7 @@ Gradle build, signing and installing on a real TV, was built in one conversation
 | ✈️ **100 % offline** | The video is bundled in the APK. The app requests **zero permissions**, not even Internet |
 | ♾️ **Seamless loop** | One exact 60-second picture cycle with an equal-power audio crossfade, so there's no visible or audible seam |
 | 🖼️ **Edge-to-edge** | Letterbox bars are cropped out so the fire fills the whole 16:9 screen |
-| 🪶 **Tiny** | About **17 MB**, down from **191 MB** in the first build (see below) |
+| 🪶 **Tiny** | About **31 MB** with the current source (17 MB with the original one), down from **191 MB** in the first build (see below) |
 | 🌙 **Screensaver too** | Optional silent screensaver (Android `DreamService`), set over adb |
 | 🔁 **Remembers its place** | Pauses in `onPause`, resumes where it left off in `onResume` |
 | 🧰 **No dependencies** | Plain Java, `MediaPlayer` + `SurfaceView`, no third-party libraries |
@@ -37,6 +37,7 @@ Gradle build, signing and installing on a real TV, was built in one conversation
 | v2: cropped to fill the screen | same, upscaled crop | 191 MB |
 | v3: **one 60 s seamless loop**, HEVC CRF 23 | H.265 Main@4.1 | 21.5 MB |
 | v4: HEVC CRF 26 | H.265 Main@4.1 | **16.8 MB** |
+| v5: new, more detailed source, HEVC CRF 30, AAC 128k | H.265 Main@4.1 | **31 MB** |
 
 While analysing the original source (a Vader yule log), Claude found that the 8-hour video's picture is a
 **single 60-second clip repeated** (period 1,800 frames at 30 fps, after a ~24 s intro).
@@ -45,6 +46,18 @@ repeat, so the audio loop is stitched with a 2-second equal-power crossfade.
 
 Going from CRF 23 to CRF 26 changed SSIM against the source from 0.9785 to 0.9776.
 That's a 22 % smaller video with no visible difference on moving fire.
+
+The current source has much finer flicker and grain, which is harder to compress: at CRF 26 the
+loop was 43 MB. Test encodes, with SSIM measured against the CRF 26 loop:
+
+| CRF | Loop size | SSIM vs CRF 26 |
+|---|---|---|
+| 26 | 43 MB | 1.000 |
+| 28 | 36 MB | 0.978 |
+| **30 (default)** | **30 MB** | 0.973 |
+| 32 | 25 MB | 0.967 |
+
+CRF 30 is the default now. `CRF=28 ./build.sh` gives a sharper, larger build.
 
 ## 🎬 Video source
 
@@ -160,7 +173,7 @@ It starts after the TV's usual screensaver idle time.
 ```mermaid
 flowchart LR
     A[YouTube source] -->|yt-dlp, first ~2 min| B[work/source.mp4]
-    B -->|ffmpeg: crop letterbox, 1 × 60 s cycle,<br/>audio crossfade, x265 CRF 26| C[res/raw/sith_fire.mp4]
+    B -->|ffmpeg: crop letterbox, 1 × 60 s cycle,<br/>audio crossfade, x265 CRF 30| C[res/raw/sith_fire.mp4]
     B -->|frame grab| D[banner 320×180 + icon]
     C --> E[Gradle 9.8.2 / AGP 9.5.0<br/>assembleRelease]
     D --> E
