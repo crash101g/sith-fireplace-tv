@@ -60,6 +60,7 @@ Only the first ~2 minutes are fetched (`yt-dlp --download-sections`), and only o
 
 Requirements: Linux/macOS, JDK 17+, Android SDK (`$ANDROID_HOME` or `~/Android/Sdk`),
 `ffmpeg` with `libx265`, and `yt-dlp` (installed via `pipx` if missing).
+The optional AI upscale also needs a Google account (for Colab and Drive).
 
 ```bash
 git clone https://github.com/crash101g/sith-fireplace-tv.git
@@ -138,12 +139,38 @@ It starts after the TV's usual screensaver idle time.
 - To hear the fire in the screensaver, set `PLAY_AUDIO = true` in
   `SithDreamService.java` and rebuild.
 
+### 🧠 Optional: AI upscaling (Real-ESRGAN on a free Colab GPU)
+
+The YouTube source is a soft 2.6 Mbps VP9 stream, and filling a 16:9 screen means
+cropping and enlarging it 1.35×. The optional AI pass runs every frame of the loop
+through [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) **x4plus**, which
+removes compression blur and sharpens edges such as the helmet rim, the vents and
+the sparks. The final video stays 1080p, so the APK stays small.
+
+x4plus takes ~5 minutes per frame on an Intel iGPU (6+ days for the loop). To speed
+it up, the crop is halved to 712×400 before upscaling. That makes the model 4× faster
+and looks almost the same at 1080p. It then runs on Google Colab's free T4 GPU:
+
+1. `PREP_UPSCALE=1 ./build.sh` writes `work/upscale_input.mkv` (~145 MB, lossless).
+2. Upload it to Google Drive as `My Drive/sith_upscale/upscale_input.mkv`.
+3. Open [`colab/upscale.ipynb` in Colab](https://colab.research.google.com/github/crash101g/sith-fireplace-tv/blob/main/colab/upscale.ipynb),
+   pick **Runtime → Change runtime type → T4 GPU**, then **Runtime → Run all**.
+   The notebook saves its work in 150-frame chunks, so after a disconnect you just run it again.
+4. Download `My Drive/sith_upscale/out/sith_upscaled.mp4` to `work/sith_upscaled.mp4`.
+5. `./build.sh [TV_IP[:PORT]]`. When `work/sith_upscaled.mp4` exists, it is used
+   as the picture (the audio still comes from the source).
+
+`colab/upscale.py` also runs anywhere with PyTorch and ffmpeg, e.g. on a PC with an
+NVIDIA GPU. To go back to the plain build, delete `work/sith_upscaled.mp4`.
+
 ### Pipeline
 
 ```mermaid
 flowchart LR
     A[YouTube source] -->|yt-dlp, first ~2 min| B[work/source.mp4]
     B -->|ffmpeg: crop letterbox, 1 × 60 s cycle,<br/>audio crossfade, x265 CRF 26| C[res/raw/sith_fire.mp4]
+    B -.->|optional: half-size crop| U[Colab T4<br/>Real-ESRGAN x4plus]
+    U -.->|work/sith_upscaled.mp4| C
     B -->|frame grab| D[banner 320×180 + icon]
     C --> E[Gradle 9.8.2 / AGP 9.5.0<br/>assembleRelease]
     D --> E
@@ -224,6 +251,9 @@ Steps:
 17. `merge the PR`
 18. `install it on my TV` → `<TV-IP>:<PORT>`
 19. `update github`
+20. `can you leverage AI to upscale the quality and perceived resoluiton of the video results to make it look more realistic (higher quality)?`
+21. `how much would a cloud GPU cost?  would another pop os computer with nvidia 1050ti help?` (also: keep 1080p rather than 4K)
+22. `Try the free google colab option`
 
 ## ⚖️ Copyright & trademarks
 
