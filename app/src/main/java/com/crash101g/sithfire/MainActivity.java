@@ -20,7 +20,7 @@ import android.widget.FrameLayout;
 import java.io.IOException;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback {
-    private static final String TAG = "SithFireplace";
+    private static final String TAG = "Fireplace";
     private static final String KEY_POSITION = "position";
 
     private SurfaceView surfaceView;

@@ -17,7 +17,7 @@ import java.io.IOException;
  * {@link MainActivity}. Any remote button press wakes the TV back up.
  */
 public class SithDreamService extends DreamService implements SurfaceHolder.Callback {
-    private static final String TAG = "SithFireplaceDream";
+    private static final String TAG = "FireplaceDream";
 
     /** Screensavers start on their own, so the crackle is off by default. */
     private static final boolean PLAY_AUDIO = false;

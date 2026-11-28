@@ -1,8 +1,8 @@
-# 🔥 Sith Fireplace TV
+# 🔥 Fireplace TV
 
 **Turn your living-room TV into a crackling Sith yule log, built by AI from a single prompt.**
 
-Sith Fireplace TV is a tiny, fully offline Android TV / Google TV app that plays a
+Fireplace TV is a tiny, fully offline Android TV / Google TV app that plays a
 seamless, full-screen fireplace loop forever. It needs no network, no ads and no account,
 and it keeps the screen on until you press **Back** or **Home**.
 
@@ -69,21 +69,21 @@ Requirements: Linux/macOS, JDK 17+, Android SDK (`$ANDROID_HOME` or `~/Android/S
 ```bash
 git clone https://github.com/crash101g/sith-fireplace-tv.git
 cd sith-fireplace-tv
-./build.sh                       # build only → SithFireplace.apk
+./build.sh                       # build only → Fireplace.apk
 ./build.sh 192.168.1.50          # build + install via adb (port 5555)
 ./build.sh 192.168.1.50:37123    # build + install via Wireless debugging port
 ```
 
 ### 🐧 Play it on Pop!_OS / Linux
 
-The same 1-minute loop is saved as `SithFireplace.mp4`, and `play-local.sh` plays it
+The same 1-minute loop is saved as `Fireplace.mp4`, and `play-local.sh` plays it
 full screen forever (mpv, then VLC, then ffplay, whichever you have), keeping the screen awake:
 
 ```bash
 NO_APK=1 ./build.sh            # just the video, no Android SDK needed
 ./play-local.sh                # Esc / q to quit
 ./play-local.sh --mute         # no crackle
-./play-local.sh --install      # add "Sith Fireplace" to the app launcher
+./play-local.sh --install      # add "Fireplace" to the app launcher
 ```
 
 On the TV, enable **Developer options → USB/Wireless debugging** and accept the
@@ -118,7 +118,7 @@ adb shell settings get secure screensaver_components
 
 On most Google TVs this prints Google's Ambient Mode component or `null`.
 
-#### 3. Make Sith Fireplace the screensaver
+#### 3. Make Fireplace the screensaver
 
 ```bash
 adb shell settings put secure screensaver_enabled 1
@@ -164,13 +164,13 @@ flowchart LR
     B -->|frame grab| D[banner 320×180 + icon]
     C --> E[Gradle 9.8.2 / AGP 9.5.0<br/>assembleRelease]
     D --> E
-    E --> F[SithFireplace.apk]
+    E --> F[Fireplace.apk]
     F -->|adb install -r| G[📺 Google TV]
 ```
 
 ### Tech specs
 
-- Shows on the TV as **Sith Fireplace** (app row and screensaver name)
+- Shows on the TV as **Fireplace** (app row and screensaver name)
 - Package `com.crash101g.sithfire`, minSdk 24, targetSdk 35, compileSdk 36
 - Gradle 9.8.2 + Android Gradle Plugin 9.5.0, debug-signed release build
 - `androidResources { noCompress 'mp4' }`, so the video is stored uncompressed and played straight from the APK

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Rebuilds Sith Fireplace end to end:
-#   download -> one seamless 60 s loop -> SithFireplace.mp4 (for Pop!_OS) + APK (for Google TV) -> (optional) install
+# Rebuilds Fireplace end to end:
+#   download -> one seamless 60 s loop -> Fireplace.mp4 (for Pop!_OS) + APK (for Google TV) -> (optional) install
 # Usage: ./build.sh [TV_IP[:PORT]]
 #        SCREENSAVER=1 ./build.sh TV_IP[:PORT]   # also make it the TV's screensaver
 #        NO_APK=1 ./build.sh                     # only make the local Linux video
@@ -14,7 +14,7 @@ LOOP_LEN="${LOOP_LEN:-60}"       # length of the loop: 1 minute
 XFADE="${XFADE:-2}"              # picture + sound crossfade at the loop point, so the repeat has no seam
 CRF="${CRF:-26}"                 # HEVC quality (lower = better/larger)
 RAW=app/src/main/res/raw/sith_fire.mp4
-LOCAL=SithFireplace.mp4          # the same loop, for playing on the PC (./play-local.sh)
+LOCAL=Fireplace.mp4          # the same loop, for playing on the PC (./play-local.sh)
 SDK="${ANDROID_HOME:-$HOME/Android/Sdk}"
 TV_IP="${1:-}"   # IP or IP:PORT (defaults to port 5555)
 [ -n "$TV_IP" ] && [[ "$TV_IP" != *:* ]] && TV_IP="$TV_IP:5555"
@@ -90,13 +90,13 @@ ffmpeg -y -v error -i work/frame.png -vf "crop=ih:ih,scale=192:192" app/src/main
 
 # 6. Build
 ./gradlew assembleRelease --console=plain
-cp app/build/outputs/apk/release/app-release.apk SithFireplace.apk
-echo "Built $(pwd)/SithFireplace.apk ($(du -h SithFireplace.apk | cut -f1))"
+cp app/build/outputs/apk/release/app-release.apk Fireplace.apk
+echo "Built $(pwd)/Fireplace.apk ($(du -h Fireplace.apk | cut -f1))"
 
 # 7. Optional install
 if [ -n "$TV_IP" ]; then
   adb connect "$TV_IP"
-  adb -s "$TV_IP" install -r SithFireplace.apk
+  adb -s "$TV_IP" install -r Fireplace.apk
   if [ "${SCREENSAVER:-0}" = 1 ]; then
     # Google TV's Settings only lists Google's Ambient Mode, so pick the dream via adb.
     adb -s "$TV_IP" shell settings put secure screensaver_enabled 1
