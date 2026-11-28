@@ -1,6 +1,6 @@
 # 🔥 Fireplace TV
 
-**Turn your living-room TV into a crackling Sith yule log, built by AI from a single prompt.**
+**Turn your living-room TV into a crackling fireplace, built by AI from a single prompt.**
 
 Fireplace TV is a tiny, fully offline Android TV / Google TV app that plays a
 seamless, full-screen fireplace loop forever. It needs no network, no ads and no account,
